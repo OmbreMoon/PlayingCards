@@ -5,22 +5,22 @@ import com.ombremoon.playingcards.network.ModNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.InputEvent;
 
 public class CardInteractEvent {
 
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
-    public void onLeftClick(InputEvent.MouseButton event) {
+    public void onLeftClick(InputEvent.InteractionKeyMappingTriggered event) {
 
         Minecraft mc = Minecraft.getInstance();
 
         if (mc.screen == null) {
 
-            if (event.getAction() == 1 && event.getButton() == 0) {
+            if (event.isAttack()) {
 
                 Player player = mc.player;
 

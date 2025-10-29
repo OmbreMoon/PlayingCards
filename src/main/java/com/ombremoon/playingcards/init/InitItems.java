@@ -14,15 +14,14 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class InitItems {
 
-    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, PCReference.MOD_ID);
-    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, PCReference.MOD_ID);
+    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(Registries.BLOCK, PCReference.MOD_ID);
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, PCReference.MOD_ID);
     public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, PCReference.MOD_ID);
 
     //----- BLOCKS ------\\
@@ -48,18 +47,9 @@ public class InitItems {
     public static final RegistryObject<Item> POKER_CHIP_GREEN = ITEMS.register("poker_chip_green", () -> new ItemPokerChip((byte)3,25));
     public static final RegistryObject<Item> POKER_CHIP_BLACK = ITEMS.register("poker_chip_black", () -> new ItemPokerChip((byte)4,100));
 
-    public static final RegistryObject<CreativeModeTab> TAB = TABS.register(PCReference.MOD_ID, () -> CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
+    public static final RegistryObject<CreativeModeTab> TAB = TABS.register(PCReference.MOD_ID, () -> CreativeModeTab.builder()
             .icon(() -> new ItemStack(CARD.get()))
-            .displayItems(
-                    (itemDisplayParameters, output) -> {
-                        ITEMS.getEntries().stream().filter(object -> !(object.get() instanceof ItemCardCovered)).forEach((registryObject) -> {
-                            if (registryObject.get() instanceof ItemCardDeck deck) {
-                                deck.fillItemGroup(output);
-                            } else {
-                                output.accept(new ItemStack(registryObject.get()));
-                            }
-                        });
-                    }).title(Component.translatable("itemGroup." + PCReference.MOD_ID + ".tab"))
+            .title(Component.translatable("itemGroup." + PCReference.MOD_ID + ".tab"))
             .build());
 
     //public static final RegistryObject<Item> DICE_WHITE = ITEMS.register("dice_white", ItemDice::new);
@@ -68,5 +58,18 @@ public class InitItems {
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
         TABS.register(modEventBus);
+        modEventBus.addListener(InitItems::buildCreativeTab);
+    }
+
+    private static void buildCreativeTab(BuildCreativeModeTabContentsEvent event) {
+        if (event.getTab() == TAB.get()) {
+            ITEMS.getEntries().stream().filter(object -> !(object.get() instanceof ItemCardCovered)).forEach((registryObject) -> {
+                if (registryObject.get() instanceof ItemCardDeck deck) {
+                    deck.fillItemGroup(event);
+                } else {
+                    event.accept(new ItemStack(registryObject.get()));
+                }
+            });
+        }
     }
 }

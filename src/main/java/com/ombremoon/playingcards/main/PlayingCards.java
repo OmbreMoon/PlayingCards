@@ -8,39 +8,37 @@ import com.ombremoon.playingcards.network.ModNetworking;
 import com.ombremoon.playingcards.render.*;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.common.NeoForge;
 
 @Mod(PCReference.MOD_ID)
-@Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
 public class PlayingCards {
 
-    public PlayingCards() {
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+    public PlayingCards(IEventBus modEventBus) {
         CommonClass.init(modEventBus);
         modEventBus.addListener(this::onCommonSetup);
         modEventBus.addListener(this::onClientSetup);
-        MinecraftForge.EVENT_BUS.register(this);
+        NeoForge.EVENT_BUS.register(this);
         EntityDataSerializers.registerSerializer(PCDataSerializers.STACK);
     }
 
     private void onCommonSetup(final FMLCommonSetupEvent event) {
         ModNetworking.registerPackets();
-        MinecraftForge.EVENT_BUS.register(new CardInteractEvent());
+        NeoForge.EVENT_BUS.register(new CardInteractEvent());
     }
 
     private void onClientSetup(final FMLClientSetupEvent event) {
+        event.enqueueWork(() -> {
+            InitModelOverrides.init();
 
-        InitModelOverrides.init();
-
-        EntityRenderers.register(InitEntityTypes.CARD.get(), RenderEntityCard::new);
-        EntityRenderers.register(InitEntityTypes.CARD_DECK.get(), RenderEntityCardDeck::new);
-        EntityRenderers.register(InitEntityTypes.POKER_CHIP.get(), RenderEntityPokerChip::new);
-        EntityRenderers.register(InitEntityTypes.DICE.get(), RenderEntityDice::new);
-        EntityRenderers.register(InitEntityTypes.SEAT.get(), RenderEntitySeat::new);
+            EntityRenderers.register(InitEntityTypes.CARD.get(), RenderEntityCard::new);
+            EntityRenderers.register(InitEntityTypes.CARD_DECK.get(), RenderEntityCardDeck::new);
+            EntityRenderers.register(InitEntityTypes.POKER_CHIP.get(), RenderEntityPokerChip::new);
+            EntityRenderers.register(InitEntityTypes.DICE.get(), RenderEntityDice::new);
+            EntityRenderers.register(InitEntityTypes.SEAT.get(), RenderEntitySeat::new);
+        });
     }
 }

@@ -2,16 +2,16 @@ package com.ombremoon.playingcards.init;
 
 import com.ombremoon.playingcards.main.PCReference;
 import com.ombremoon.playingcards.recipes.CardDeckRecipe;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.RegistryObject;
 
 public class InitRecipes {
 
-    public static final DeferredRegister<RecipeSerializer<?>> RECIPES = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, PCReference.MOD_ID);
+    public static final DeferredRegister<RecipeSerializer<?>> RECIPES = DeferredRegister.create(Registries.RECIPE_SERIALIZER, PCReference.MOD_ID);
 
     public static final RegistryObject<RecipeSerializer<CardDeckRecipe>> DECK = RECIPES.register("deck", () -> new SimpleCraftingRecipeSerializer<>(CardDeckRecipe::new));
 
