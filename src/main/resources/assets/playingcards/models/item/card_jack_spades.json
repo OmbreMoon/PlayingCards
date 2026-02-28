@@ -1,6 +1,0 @@
-{
-	"parent": "playingcards:item/card_base",
-	"textures": {
-		"0": "playingcards:item/cards/card_jack_spades"
-	}
-}
