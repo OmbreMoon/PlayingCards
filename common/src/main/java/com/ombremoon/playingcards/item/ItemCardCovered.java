@@ -118,7 +118,8 @@ public class ItemCardCovered extends ItemBase {
                             Level world = pContext.getLevel();
                             Byte skinID = stack.get(Services.DATA.getSkinId().get());
                             Boolean covered = stack.get(Services.DATA.getCovered().get());
-                            EntityCard cardDeck = new EntityCard(world, pContext.getClickLocation(), pContext.getRotation(), skinID != null ? skinID : 0, deckID, covered != null ? covered : true, pContext.getItemInHand().get(Services.DATA.getValue().get()));
+                            Byte cardValue = pContext.getItemInHand().get(Services.DATA.getValue().get());
+                            EntityCard cardDeck = new EntityCard(world, pContext.getClickLocation(), pContext.getRotation(), skinID != null ? skinID : 0, deckID, covered != null ? covered : true, cardValue != null ? cardValue : 0);
                             world.addFreshEntity(cardDeck);
                             pContext.getItemInHand().shrink(1);
 

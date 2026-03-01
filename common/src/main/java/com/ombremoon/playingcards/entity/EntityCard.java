@@ -115,7 +115,8 @@ public class EntityCard extends EntityStacked {
         if (stack.getItem() instanceof ItemCardCovered) {
 
             if (getStackAmount() < MAX_STACK_SIZE) {
-                addToTop(stack.get(Services.DATA.getValue().get()));
+                Byte value = stack.get(Services.DATA.getValue().get());
+                addToTop(value != null ? value : 0);
                 stack.shrink(1);
             }
 
